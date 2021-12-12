@@ -6,7 +6,11 @@ spring:
     active: local
   datasource:
     hikari:
-      jdbc-url: jdbc:h2:./data/board
+      jdbc-url: jdbc:h2:tcp://localhost/~/board
       driver-class-name: org.h2.Driver
       username: sa
       password: admin
+
+  jpa:
+    hibernate:
+      ddl-auto: create
