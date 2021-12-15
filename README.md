@@ -27,7 +27,7 @@ Spring Framework 기반 사용자 게시판 구축 프로젝트
 * **기획 및 DB 설계** : 2021.12.08 - 2021.12.09
 * **BE 개발 및 테스트** : 2021.12.10 - 2021.12.26
    * Entity, Repository 작성 및 연관관계 매핑 : 12.10 - 12.14
-   * Service, Dto 작성 : 12.15 - 12.16
+   * Dto, Service 작성 : 12.15 - 12.16
    * 도메인별 Rest Controller 작성 및 테스트 : 12.17
    * Spring Security 적용 및 테스트 : 12.18 - 12.20
    * Spring Batch 서비스 개발 : 12.21 - 12.23
@@ -44,6 +44,12 @@ Spring Framework 기반 사용자 게시판 구축 프로젝트
 * [**DB 설계**](https://www.notion.so/imagineallthepeople/DB-b5ff457d6a884b9c8a929c2962e2510d)
 
 ### 3. BE 개발 및 테스트
+* [Entity, Repository 작성 및 연관관계 매핑](https://www.notion.so/imagineallthepeople/JPA-Entity-h2-a539aed5a19d4a48ad85cdb2cdd82dde)
+* [Dto, Service 작성](https://www.notion.so/imagineallthepeople/JPA-DTO-Service-bf48aec545e141c2abc6a2fed917c75f)
+* 도메인별 Rest Controller 작성 및 테스트
+* Spring Security 적용 및 테스트
+   * [설정](https://www.notion.so/imagineallthepeople/SpringSecurity-UserDetails-2563e62b4d4246fd9853ed850a8457ce)
+* Spring Batch 서비스 개발
 
 ### 4. FE 개발 및 테스트
 
