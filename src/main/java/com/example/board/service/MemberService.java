@@ -10,8 +10,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,36 +28,76 @@ public class MemberService {
      * @param adminYn
      * @return Member
      */
-    public Member join(MemberDto.Request requestMember, String adminYn){
+    public MemberDto.Response join(MemberDto.Request requestMember, String adminYn){
 
-        Member member = Member.builder()
-                            .email(requestMember.getEmail())
-                            .password(requestMember.getPassword())
-                            .name(requestMember.getName())
-                            .delYn("N")
-                            .regDate(LocalDateTime.now())
-                            .modDate(LocalDateTime.now())
-                            .build();
+        Member member = modelMapper.map(requestMember, Member.class);
+        member.setDelYn("N");
 
         if (adminYn == "Y"){
             member.setAuthority(Authority.ROLE_ADMIN);
         } else {
             member.setAuthority(Authority.ROLE_USER);
         }
+        MemberDto.Response responseMember = modelMapper.map(memberRepository.save(member),MemberDto.Response.class);
+        responseMember.setReturnCode(201);
+        responseMember.setReturnMessage("success");
 
-        return memberRepository.save(member);
+        return responseMember;
     }
 
-    public Optional<Member> findById(Long id){
-        return memberRepository.findById(id);
+    public MemberDto.Response findById(Long id){
+
+        Optional<Member> optMember = memberRepository.findById(id);
+        MemberDto.Response responseMember = new MemberDto.Response();
+
+        if (optMember.isPresent()) {
+
+            MemberDto.Info infoMember = modelMapper.map(optMember.get(), MemberDto.Info.class);
+
+            responseMember.setInfo(infoMember);
+            responseMember.setReturnCode(200);
+            responseMember.setReturnMessage("success");
+
+        } else {
+
+            responseMember.setReturnCode(404);
+            responseMember.setReturnMessage("not found");
+
+        }
+
+        return responseMember;
     }
 
-    public Optional<Member> findByEmail(String email){
-        return memberRepository.findByEmail(email);
+    public MemberDto.Response findByEmail(String email){
+
+        Optional<Member> optMember = memberRepository.findByEmail(email);
+        MemberDto.Response responseMember = new MemberDto.Response();
+
+        if (optMember.isPresent()) {
+
+            MemberDto.Info infoMember = modelMapper.map(optMember.get(), MemberDto.Info.class);
+
+            responseMember.setInfo(infoMember);
+            responseMember.setReturnCode(200);
+            responseMember.setReturnMessage("success");
+
+        } else {
+
+            responseMember.setReturnCode(404);
+            responseMember.setReturnMessage("not found");
+
+        }
+
+        return responseMember;
     }
 
-    public List<Member> findAll(){
-        return memberRepository.findAll();
+    public List<MemberDto.Response> findAll(){
+
+        List<MemberDto.Response> resultList = memberRepository.findAll().stream().map( m ->
+            modelMapper.map(m, MemberDto.Response.class)
+        ).collect(Collectors.toList());
+
+        return resultList;
     }
 
     public MemberDto.Response updateMember(MemberDto.Info infoMember){
@@ -65,20 +107,11 @@ public class MemberService {
 
         if(optMember.isPresent()) {
 
-            Member member = optMember.get();
-
-            //modelMapper 라이브러리로 리팩토링하기
-            member.setEmail(infoMember.getEmail());
-            member.setPassword(infoMember.getPassword());
-            member.setName(infoMember.getName());
-            member.setAuthority(infoMember.getAuthority());
-            member.setDelYn(infoMember.getDelYn());
-            member.setModDate(infoMember.getModDate());
-
-            memberRepository.save(member);
+            infoMember.setModDate(LocalDateTime.now());
+            memberRepository.save(modelMapper.map(infoMember, Member.class));
 
             updatedMember.setInfo(infoMember);
-            updatedMember.setReturnCode(200);
+            updatedMember.setReturnCode(201);
             updatedMember.setReturnMessage("success");
 
         } else {
@@ -96,17 +129,13 @@ public class MemberService {
         if (member.isPresent()){
 
             memberRepository.deleteById(id);
-
             responseMember.setReturnCode(202);
             responseMember.setReturnMessage("success");
 
         } else {
-
             responseMember.setReturnCode(404);
             responseMember.setReturnMessage("not found");
-
         }
-
         return responseMember;
     }
 

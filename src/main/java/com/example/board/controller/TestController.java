@@ -1,5 +1,6 @@
 package com.example.board.controller;
 
+import com.example.board.common.service.MailService;
 import com.example.board.domain.Member;
 import com.example.board.domain.Post;
 import com.example.board.dto.PostDto;
@@ -74,6 +75,12 @@ public class TestController {
         System.out.println("ModDate : "+postDto.getModDate());
         System.out.println("======================");
 
+    }
+
+    @GetMapping("/mail")
+    public void sendMail(){
+        MailService mailService = new MailService();
+        mailService.sendMail();
     }
 
 }

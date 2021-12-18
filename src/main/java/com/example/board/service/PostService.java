@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -18,37 +19,67 @@ public class PostService {
     private final PostRepository postRepository;
     private final ModelMapper modelMapper;
 
-    public Post createPost(PostDto.Request requestPost){
+    public PostDto.Response createPost(PostDto.Request requestPost){
 
-        Post post = Post.builder()
-                .title(requestPost.getTitle())
-                .content(requestPost.getContent())
-                .delYn("N")
-                .regDate(LocalDateTime.now())
-                .modDate(LocalDateTime.now())
-                .build();
+       Post post = postRepository.save(modelMapper.map(requestPost, Post.class));
 
-        return postRepository.save(post);
+       PostDto.Response responsePost = modelMapper.map(post, PostDto.Response.class);
+       responsePost.setReturnCode(201);
+       responsePost.setReturnMessage("success");
+
+       return responsePost;
     }
 
-    public Optional<Post> findById(Long id){
-        return postRepository.findById(id);
+    public PostDto.Response findById(Long id){
+
+        Optional<Post> optPost = postRepository.findById(id);
+        PostDto.Response responsePost = new PostDto.Response();
+
+        if (optPost.isPresent()) {
+            responsePost.setInfo(modelMapper.map(optPost.get(), PostDto.Info.class));
+            responsePost.setReturnCode(200);
+            responsePost.setReturnMessage("success");
+
+        } else {
+            responsePost.setReturnCode(404);
+            responsePost.setReturnMessage("not found");
+        }
+
+        return responsePost;
     };
 
-    public List<Post> findByMemberId(Long memberId){
-        return postRepository.findPostsByMemberId(memberId);
+    public List<PostDto.Response> findByMemberId(Long memberId){
+
+        List<Post> postList =  postRepository.findPostsByMemberId(memberId);
+        List<PostDto.Response> resultList = postList.stream().map(m ->
+                modelMapper.map(m, PostDto.Response.class)).collect(Collectors.toList());
+
+        return resultList;
     };
 
-    public List<Post> findByTitle(String title){
-        return postRepository.findPostsByTitleContaining(title);
+    public List<PostDto.Response> findByTitle(String title){
+        List<Post> postList =  postRepository.findPostsByTitleContaining(title);
+        List<PostDto.Response> resultList = postList.stream().map(m ->
+                modelMapper.map(m, PostDto.Response.class)).collect(Collectors.toList());
+
+        return resultList;
+     }
+
+    public List<PostDto.Response> findByContent(String content){
+        List<Post> postList =  postRepository.findPostsByContentContaining(content);
+        List<PostDto.Response> resultList = postList.stream().map(m ->
+                modelMapper.map(m, PostDto.Response.class)).collect(Collectors.toList());
+
+        return resultList;
     }
 
-    public List<Post> findByContent(String content){
-        return postRepository.findPostsByContentContaining(content);
-    }
+    public List<PostDto.Response> findByDelYn(String delYn){
 
-    public List<Post> findByDelYn(String delYn){
-        return postRepository.findPostsByDelYn(delYn);
+        List<Post> postList =  postRepository.findPostsByDelYn(delYn);
+        List<PostDto.Response> resultList = postList.stream().map(m ->
+                modelMapper.map(m, PostDto.Response.class)).collect(Collectors.toList());
+
+        return resultList;
     }
 
     public PostDto.Response updatePost(PostDto.Info infoPost){
@@ -57,14 +88,8 @@ public class PostService {
         PostDto.Response updatedPost = new PostDto.Response();
 
         if (optPost.isPresent()) {
-            Post post = Post.builder()
-                    .title(infoPost.getTitle())
-                    .content(infoPost.getContent())
-                    .delYn(infoPost.getDelYn())
-                    .modDate(LocalDateTime.now())
-                    .build();
-
-            postRepository.save(post);
+            infoPost.setModDate(LocalDateTime.now());
+            postRepository.save(modelMapper.map(infoPost, Post.class));
 
             updatedPost.setInfo(infoPost);
             updatedPost.setReturnCode(200);
@@ -74,8 +99,6 @@ public class PostService {
             updatedPost.setReturnCode(404);
             updatedPost.setReturnMessage("not found");
         }
-
-
         return updatedPost;
     }
 
