@@ -5,6 +5,7 @@ import com.example.board.dto.MemberDto;
 import com.example.board.enums.Authority;
 import com.example.board.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final ModelMapper modelMapper;
 
     /**
      * 관리자 여부 판단하여 권한을 주는 멤버 등록 로직

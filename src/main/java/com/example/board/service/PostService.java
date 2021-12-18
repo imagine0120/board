@@ -4,6 +4,7 @@ import com.example.board.domain.Post;
 import com.example.board.dto.PostDto;
 import com.example.board.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ import java.util.Optional;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final ModelMapper modelMapper;
 
     public Post createPost(PostDto.Request requestPost){
 
