@@ -49,7 +49,7 @@ Spring Framework 기반 사용자 게시판 구축 프로젝트
 * 도메인별 Rest Controller 작성 및 테스트
 * Spring Security 적용 및 테스트
    * [설정](https://www.notion.so/imagineallthepeople/SpringSecurity-UserDetails-2563e62b4d4246fd9853ed850a8457ce)
-* Spring Batch 서비스 개발
+* [Spring Batch 서비스 개발](https://www.notion.so/imagineallthepeople/Spring-Batch-e8c03f021722427f82788de33a0a1d30)
 
 ### 4. FE 개발 및 테스트
 
