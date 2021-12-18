@@ -1,15 +1,16 @@
 package com.example.board.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-
 import javax.persistence.*;
-
 import com.example.board.enums.*;
-
+import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data @Builder
+@NoArgsConstructor @AllArgsConstructor
 @Entity @Table(name = "Members")
 public class Member {
 
@@ -37,5 +38,17 @@ public class Member {
 
     @Column(nullable = false)
     private LocalDateTime modDate;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "memberId")
+    private List<Post> postList;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "memberId")
+    private List<Comment> commentList;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "memberId")
+    private List<Like> likeList;
 
 }
