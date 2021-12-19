@@ -47,6 +47,12 @@ public class CustomUserDetails implements UserDetails {
         return email;
     }
 
+    public Long getMemberId(){ return memberId; }
+
+    public String getName(){ return name; }
+
+    public String getDelYn() { return delYn; }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;

@@ -38,9 +38,14 @@ public class CommentDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Response {
-        private Info info;
-        private int returnCode;
-        private String returnMessage;
+        private Long commentId;
+        private Long postId;
+        private Long memberId;
+        private String cmtContent;
+        private String delYn;
+        private Long parentComment;
+        private LocalDateTime regDate;
+        private LocalDateTime modDate;
     }
 
 }

@@ -5,9 +5,12 @@ import com.example.board.domain.Member;
 import com.example.board.domain.Post;
 import com.example.board.dto.PostDto;
 import com.example.board.enums.Authority;
+import com.example.board.security.user.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -81,6 +84,20 @@ public class TestController {
     public void sendMail(){
         MailService mailService = new MailService();
         mailService.sendMail();
+    }
+
+    @PostMapping("/security")
+    public void securityTest(){
+        CustomUserDetails user = (CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (user != null) {
+            System.out.println("===============================");
+            System.out.println("username : "+user.getUsername());
+            System.out.println("name : "+user.getName());
+            System.out.println("memberId : "+user.getMemberId());
+            System.out.println("===============================");
+        }
+
     }
 
 }

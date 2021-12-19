@@ -44,9 +44,13 @@ public class MemberDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Response {
-        private Info info;
-        private int returnCode;
-        private String returnMessage;
+        private Long memberId;
+        private String email;
+        private String name;
+        private Authority authority;
+        private String delYn;
+        private LocalDateTime regDate;
+        private LocalDateTime modDate;
     }
 
 }

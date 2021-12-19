@@ -1,13 +1,13 @@
 package com.example.board.service;
 
-import com.example.board.domain.Post;
+import com.example.board.domain.Comment;
 import com.example.board.dto.CommentDto;
-import com.example.board.dto.PostDto;
 import com.example.board.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -19,42 +19,84 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final ModelMapper modelMapper;
 
-    public CommentDto.Response createComment(PostDto.Request requestPost){
+    public CommentDto.Response createComment(CommentDto.Request requestComment){
 
-        Post post = postRepository.save(modelMapper.map(requestPost, Post.class));
+        Comment comment = commentRepository.save(modelMapper.map(requestComment, Comment.class));
+        CommentDto.Response responseComment = modelMapper.map(comment, CommentDto.Response.class);
 
-        PostDto.Response responsePost = modelMapper.map(post, PostDto.Response.class);
-        responsePost.setReturnCode(201);
-        responsePost.setReturnMessage("success");
-
-        return responsePost;
+        return responseComment;
     }
 
-    public PostDto.Response findById(Long id){
+    public CommentDto.Response findById(Long id){
 
-        Optional<Post> optPost = postRepository.findById(id);
-        PostDto.Response responsePost = new PostDto.Response();
+        Optional<Comment> optComment = commentRepository.findById(id);
+        CommentDto.Response responseComment = new CommentDto.Response();
 
-        if (optPost.isPresent()) {
-            responsePost.setInfo(modelMapper.map(optPost.get(), PostDto.Info.class));
-            responsePost.setReturnCode(200);
-            responsePost.setReturnMessage("success");
-
-        } else {
-            responsePost.setReturnCode(404);
-            responsePost.setReturnMessage("not found");
+        if (optComment.isPresent()) {
+            modelMapper.map(optComment.get(), CommentDto.Response.class);
         }
-
-        return responsePost;
+        return responseComment;
     };
 
-    public List<PostDto.Response> findByMemberId(Long memberId){
+    public List<CommentDto.Response> findAll(){
+        List<Comment> commentList =  commentRepository.findAll();
+        List<CommentDto.Response> resultList = commentList.stream().map(c ->
+                modelMapper.map(c,CommentDto.Response.class)).collect(Collectors.toList());
 
-        List<Post> postList =  postRepository.findPostsByMemberId(memberId);
-        List<PostDto.Response> resultList = postList.stream().map(m ->
-                modelMapper.map(m, PostDto.Response.class)).collect(Collectors.toList());
+        return resultList;
+    }
+
+    public List<CommentDto.Response> findByMemberId(Long memberId){
+
+        List<Comment> commentList =  commentRepository.findCommentsByMemberId(memberId);
+        List<CommentDto.Response> resultList = commentList.stream().map(c ->
+                modelMapper.map(c,CommentDto.Response.class)).collect(Collectors.toList());
 
         return resultList;
     };
+
+    public List<CommentDto.Response> findByPostId(Long postId){
+
+        List<Comment> commentList =  commentRepository.findCommentsByPostId(postId);
+        List<CommentDto.Response> resultList = commentList.stream().map(c ->
+                modelMapper.map(c,CommentDto.Response.class)).collect(Collectors.toList());
+
+        return resultList;
+    };
+
+    public List<CommentDto.Response> findByParentCommentId(Long parentCmtId){
+
+        List<Comment> commentList =  commentRepository.findCommentsByParentComment(parentCmtId);
+        List<CommentDto.Response> resultList = commentList.stream().map(c ->
+                modelMapper.map(c,CommentDto.Response.class)).collect(Collectors.toList());
+
+        return resultList;
+    };
+
+    public CommentDto.Response updateComment(CommentDto.Info infoComment){
+
+        Optional<Comment> optComment = commentRepository.findById(infoComment.getCommentId());
+        CommentDto.Response responseComment = new CommentDto.Response();
+
+        if (optComment.isPresent()) {
+            infoComment.setModDate(LocalDateTime.now());
+            commentRepository.save(modelMapper.map(infoComment, Comment.class));
+
+            responseComment = modelMapper.map(infoComment, CommentDto.Response.class);
+        }
+        return responseComment;
+    }
+
+    public CommentDto.Response deleteComment(Long id){
+
+        Optional<Comment> optComment = commentRepository.findById(id);
+        CommentDto.Response responseComment = new CommentDto.Response();
+
+        if (optComment.isPresent()) {
+            commentRepository.deleteById(id);
+            responseComment.setCommentId(id);
+        }
+        return responseComment;
+    }
 
 }

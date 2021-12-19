@@ -33,10 +33,10 @@ public class Member {
     @Column(nullable = false)
     private String delYn;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private LocalDateTime regDate;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private LocalDateTime modDate;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

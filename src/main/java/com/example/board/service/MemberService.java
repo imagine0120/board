@@ -6,11 +6,10 @@ import com.example.board.enums.Authority;
 import com.example.board.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -38,9 +37,13 @@ public class MemberService {
         } else {
             member.setAuthority(Authority.ROLE_USER);
         }
+
+        String hashedPassword = BCrypt.hashpw(member.getPassword(), BCrypt.gensalt());
+        member.setPassword(hashedPassword);
+
+        memberRepository.save(member);
+
         MemberDto.Response responseMember = modelMapper.map(memberRepository.save(member),MemberDto.Response.class);
-        responseMember.setReturnCode(201);
-        responseMember.setReturnMessage("success");
 
         return responseMember;
     }
@@ -51,18 +54,7 @@ public class MemberService {
         MemberDto.Response responseMember = new MemberDto.Response();
 
         if (optMember.isPresent()) {
-
-            MemberDto.Info infoMember = modelMapper.map(optMember.get(), MemberDto.Info.class);
-
-            responseMember.setInfo(infoMember);
-            responseMember.setReturnCode(200);
-            responseMember.setReturnMessage("success");
-
-        } else {
-
-            responseMember.setReturnCode(404);
-            responseMember.setReturnMessage("not found");
-
+            responseMember = modelMapper.map(optMember.get(), MemberDto.Response.class);
         }
 
         return responseMember;
@@ -74,18 +66,7 @@ public class MemberService {
         MemberDto.Response responseMember = new MemberDto.Response();
 
         if (optMember.isPresent()) {
-
-            MemberDto.Info infoMember = modelMapper.map(optMember.get(), MemberDto.Info.class);
-
-            responseMember.setInfo(infoMember);
-            responseMember.setReturnCode(200);
-            responseMember.setReturnMessage("success");
-
-        } else {
-
-            responseMember.setReturnCode(404);
-            responseMember.setReturnMessage("not found");
-
+            responseMember = modelMapper.map(optMember.get(), MemberDto.Response.class);
         }
 
         return responseMember;
@@ -110,31 +91,19 @@ public class MemberService {
             infoMember.setModDate(LocalDateTime.now());
             memberRepository.save(modelMapper.map(infoMember, Member.class));
 
-            updatedMember.setInfo(infoMember);
-            updatedMember.setReturnCode(201);
-            updatedMember.setReturnMessage("success");
-
-        } else {
-            updatedMember.setReturnCode(404);
-            updatedMember.setReturnMessage("not found");
+            updatedMember = modelMapper.map(infoMember, MemberDto.Response.class);
         }
         return updatedMember;
     }
 
     public MemberDto.Response deleteMember(Long id) {
 
-        Optional<Member> member = memberRepository.findById(id);
+        Optional<Member> optMember = memberRepository.findById(id);
         MemberDto.Response responseMember = new MemberDto.Response();
 
-        if (member.isPresent()){
-
+        if (optMember.isPresent()){
             memberRepository.deleteById(id);
-            responseMember.setReturnCode(202);
-            responseMember.setReturnMessage("success");
-
-        } else {
-            responseMember.setReturnCode(404);
-            responseMember.setReturnMessage("not found");
+            responseMember.setMemberId(id);
         }
         return responseMember;
     }

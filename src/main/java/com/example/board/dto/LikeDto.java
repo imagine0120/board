@@ -36,9 +36,13 @@ public class LikeDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Response {
-        private Info info;
-        private int returnCode;
-        private String returnMessage;
+        private Long likeId;
+        private Long targetId;
+        private Long memberId;
+        private String postYn;
+        private String delYn;
+        private LocalDateTime regDate;
+        private LocalDateTime modDate;
     }
 
 }
