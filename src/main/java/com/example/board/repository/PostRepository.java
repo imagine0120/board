@@ -13,6 +13,4 @@ public interface PostRepository extends JpaRepository<Post,Long> {
 
     public List<Post> findPostsByContentContaining(String content);
 
-    public List<Post> findPostsByDelYn(String delYn);
-
 }

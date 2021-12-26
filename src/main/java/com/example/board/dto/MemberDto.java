@@ -32,6 +32,7 @@ public class MemberDto {
         private String email;
         private String password;
         private String name;
+        private Authority authority;
         private String delYn;
         private LocalDateTime regDate;
         private LocalDateTime modDate;
@@ -46,6 +47,7 @@ public class MemberDto {
     public static class Response {
         private Long memberId;
         private String email;
+        private String password;
         private String name;
         private Authority authority;
         private String delYn;

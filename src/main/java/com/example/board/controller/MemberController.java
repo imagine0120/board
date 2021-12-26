@@ -27,9 +27,9 @@ public class MemberController {
     @GetMapping
     public ResponseEntity<?> readAllMembers(HttpServletRequest request){
 
-        List<MemberDto.Response> list = memberService.findAll();
+        List<MemberDto.Response> response = memberService.findAll();
 
-        return ResponseEntity.ok().body(list);
+        return ResponseEntity.ok().body(response);
     }
 
     @GetMapping("/{memberId}")
@@ -37,7 +37,7 @@ public class MemberController {
 
         MemberDto.Response response = memberService.findById(memberId);
 
-        if (response.getMemberId() != null) {
+        if (response.getMemberId() != null & response.getMemberId() == memberId) {
             return ResponseEntity.ok().body(response);
         } else {
             return ResponseEntity.notFound().build();
@@ -49,7 +49,7 @@ public class MemberController {
 
         MemberDto.Response response = memberService.findByEmail(email);
 
-        if (response.getMemberId() != null) {
+        if (response.getEmail() != null & response.getEmail().equals(email)) {
             return ResponseEntity.ok().body(response);
         } else {
             return ResponseEntity.notFound().build();
@@ -62,7 +62,7 @@ public class MemberController {
 
         MemberDto.Response response = memberService.findById(memberId);
 
-        if (response.getMemberId() != null) {
+        if (response.getMemberId() != null & response.getMemberId() == memberId) {
             response = memberService.updateMember(infoMember);
             return ResponseEntity.ok().body(response);
         } else {
@@ -74,7 +74,7 @@ public class MemberController {
     public ResponseEntity<?> deleteMember(@PathVariable("memberId") Long memberId, HttpServletRequest request){
         MemberDto.Response response = memberService.findById(memberId);
 
-        if (response.getMemberId() != null) {
+        if (response.getMemberId() != null & response.getMemberId() == memberId) {
             response = memberService.deleteMember(memberId);
             return ResponseEntity.ok().body(response);
         } else {

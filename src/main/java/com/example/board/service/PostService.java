@@ -3,11 +3,13 @@ package com.example.board.service;
 import com.example.board.domain.Post;
 import com.example.board.dto.PostDto;
 import com.example.board.repository.PostRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,6 +27,15 @@ public class PostService {
        PostDto.Response responsePost = modelMapper.map(post, PostDto.Response.class);
 
        return responsePost;
+    }
+
+    public List<PostDto.Response> findAll(){
+        List<Post> postList = postRepository.findAll();
+        List<PostDto.Response> resultList = postList.stream().map( p ->
+            modelMapper.map(p, PostDto.Response.class)
+        ).collect(Collectors.toList());
+
+        return resultList;
     }
 
     public PostDto.Response findById(Long id){
@@ -63,11 +74,29 @@ public class PostService {
         return resultList;
     }
 
-    public List<PostDto.Response> findByDelYn(String delYn){
+    /**
+     * 제목과 내용에 특정 문자열이 포함된 Post를 찾는 메서드
+     * @param search
+     * @return
+     */
+    public List<PostDto.Response> findPostsByTitleOrContent(String search){
+        List<Post> postList = postRepository.findPostsByTitleContaining(search);
+        List<Long> postIdList = new ArrayList<>();
 
-        List<Post> postList =  postRepository.findPostsByDelYn(delYn);
-        List<PostDto.Response> resultList = postList.stream().map(p ->
-                modelMapper.map(p, PostDto.Response.class)).collect(Collectors.toList());
+        postList.forEach(p -> {
+            postIdList.add(p.getPostId());
+        });
+
+        List<Post> searchWithContent = postRepository.findPostsByContentContaining(search);
+        searchWithContent.forEach( p -> {
+            if(!postIdList.contains(p.getPostId())){
+                postList.add(p);
+            }
+        });
+
+        List<PostDto.Response> resultList = postList.stream().map( p ->
+            modelMapper.map(p, PostDto.Response.class)
+        ).collect(Collectors.toList());
 
         return resultList;
     }

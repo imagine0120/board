@@ -29,21 +29,19 @@ public class MemberService {
      */
     public MemberDto.Response join(MemberDto.Request requestMember, String adminYn){
 
-        Member member = modelMapper.map(requestMember, Member.class);
-        member.setDelYn("N");
+        requestMember.setDelYn("N");
 
         if (adminYn == "Y"){
-            member.setAuthority(Authority.ROLE_ADMIN);
+            requestMember.setAuthority(Authority.ROLE_ADMIN);
         } else {
-            member.setAuthority(Authority.ROLE_USER);
+            requestMember.setAuthority(Authority.ROLE_USER);
         }
 
-        String hashedPassword = BCrypt.hashpw(member.getPassword(), BCrypt.gensalt());
-        member.setPassword(hashedPassword);
+        String hashedPassword = BCrypt.hashpw(requestMember.getPassword(), BCrypt.gensalt());
+        requestMember.setPassword(hashedPassword);
 
-        memberRepository.save(member);
-
-        MemberDto.Response responseMember = modelMapper.map(memberRepository.save(member),MemberDto.Response.class);
+        Member member = memberRepository.save(modelMapper.map(requestMember, Member.class));
+        MemberDto.Response responseMember = modelMapper.map(member,MemberDto.Response.class);
 
         return responseMember;
     }

@@ -18,6 +18,12 @@ public class LikeService {
     private final LikeRepository likeRepository;
     private final ModelMapper modelMapper;
 
+    public LikeDto.Response createLike(LikeDto.Request requestLike){
+        Like like = likeRepository.save(modelMapper.map(requestLike, Like.class));
+        LikeDto.Response response = modelMapper.map(like, LikeDto.Response.class);
+        return response;
+    }
+
     public LikeDto.Response findById(Long id){
         Optional<Like> optLike = likeRepository.findById(id);
         LikeDto.Response responseLike = new LikeDto.Response();
